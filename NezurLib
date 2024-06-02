@@ -1,14 +1,10 @@
--- Load NezurLib
-local NezurLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/BillyAnewCoder/RobloxUtilityLib/main/NezurLib"))()
+-- Assume the library script content is directly copied here or required from the file system
 
--- Create Main Window
 local Window = NezurLib:CreateWindow(Enum.KeyCode.RightShift, "DeleteMob")
 
--- Create Tabs
 local AimbotTab = Window:CreateTab("Aimbot")
 local SettingsTab = Window:CreateTab("Settings")
 
--- Aimbot Settings Sector
 local AimbotSettings = AimbotTab:CreateSector("Aimbot Settings", "Left")
 
 AimbotSettings:CreateToggle("Aimbot Enabled", false, function(state)
@@ -43,7 +39,6 @@ AimbotSettings:CreateToggle("Trigger Bot Prediction", false, function(state)
     print("Trigger Bot Prediction: ", state)
 end)
 
--- General Settings Sector
 local GeneralSettings = SettingsTab:CreateSector("General Settings", "Left")
 
 GeneralSettings:CreateButton("Load Config", function()
@@ -54,7 +49,6 @@ GeneralSettings:CreateButton("Save Config", function()
     print("Config Saved")
 end)
 
--- Silent Aim Function
 local function getClosestEnemy()
     local closestEnemy = nil
     local shortestDistance = math.huge
@@ -75,7 +69,6 @@ local function getClosestEnemy()
     return closestEnemy
 end
 
--- Render Step for Silent Aim
 game:GetService("RunService").RenderStepped:Connect(function()
     if AimbotSettings:GetValue("Aimbot Enabled") then
         local closestEnemy = getClosestEnemy()
