@@ -1,71 +1,41 @@
-local NewLib = {}
+local customUILib = loadstring(game:HttpGet("https://raw.githubusercontent.com/BillyAnewCoder/RobloxUtilityLib/main/NewLib.lua"))();
 
-function NewLib:CreateWindow(toggleKey, windowName)
-    local window = {}
-    window.tabs = {}
-    window.toggleKey = toggleKey
-    window.name = windowName
-    
-    function window:CreateTab(tabName)
-        local tab = {}
-        tab.sectors = {}
-        tab.name = tabName
-        
-        function tab:CreateSector(sectorName, position)
-            local sector = {}
-            sector.elements = {}
-            sector.name = sectorName
-            sector.position = position
-            
-            function sector:CreateToggle(toggleName, default, callback)
-                table.insert(sector.elements, {type = "Toggle", name = toggleName, default = default, callback = callback})
-            end
-            
-            function sector:CreateButton(buttonName, callback)
-                table.insert(sector.elements, {type = "Button", name = buttonName, callback = callback})
-            end
-            
-            function sector:CreateDropDown(dropDownName, options, default, multiSelect, callback)
-                table.insert(sector.elements, {type = "DropDown", name = dropDownName, options = options, default = default, multiSelect = multiSelect, callback = callback})
-            end
-            
-            function sector:CreateSlider(sliderName, min, default, max, decimals, callback)
-                table.insert(sector.elements, {type = "Slider", name = sliderName, min = min, default = default, max = max, decimals = decimals, callback = callback})
-            end
-            
-            function sector:CreateColorPicker(colorPickerName, default, callback)
-                table.insert(sector.elements, {type = "ColorPicker", name = colorPickerName, default = default, callback = callback})
-            end
-            
-            function sector:CreateKeyBind(keyBindName, keyCode, callback)
-                table.insert(sector.elements, {type = "KeyBind", name = keyBindName, keyCode = keyCode, callback = callback})
-            end
-            
-            function sector:CreateTextBox(textBoxName, default, callback)
-                table.insert(sector.elements, {type = "TextBox", name = textBoxName, default = default, callback = callback})
-            end
-            
-            function sector:CreateLabel(labelText)
-                table.insert(sector.elements, {type = "Label", text = labelText})
-            end
-            
-            function sector:CreateCopyText(copyText)
-                table.insert(sector.elements, {type = "CopyText", text = copyText})
-            end
-            
-            table.insert(tab.sectors, sector)
-            return sector
-        end
-        
-        function tab:CreateConfig(position)
-            table.insert(tab.sectors, {type = "Config", position = position})
-        end
-        
-        table.insert(window.tabs, tab)
-        return tab
-    end
-    
-    return window
-end
+local Window = customUILib:CreateWindow(Enum.KeyCode.RightShift, "CustomUI Example");
 
-return NewLib
+local Tab = Window:CreateTab("Main");
+
+local Section = Tab:CreateSector("Controls", "Left");
+
+Section:CreateToggle("Auto Farm", false, function(enabled)
+    print("Auto Farm:", enabled)
+end)
+
+Section:CreateButton("Load Settings", function()
+    print("Settings Loaded")
+end)
+
+Section:CreateDropDown("Select Mode", {"Easy", "Medium", "Hard"}, "Easy", false, function(selected)
+    print("Selected Mode:", selected)
+end)
+
+Section:CreateSlider("Speed", 0, 10, 100, 1, function(value)
+    print("Speed:", value)
+end)
+
+Section:CreateColorPicker("Theme Color", Color3.fromRGB(255, 0, 0), function(color)
+    print("Selected Color:", color)
+end)
+
+Section:CreateKeyBind("Toggle UI", Enum.KeyCode.F, function(key)
+    print("Key Bind:", key)
+end)
+
+Section:CreateTextBox("Player Name", "Enter Name", function(name)
+    print("Player Name:", name)
+end)
+
+Section:CreateLabel("Custom UI Created by Your Name")
+
+Section:CreateCopyText("https://yourdiscordlink.com")
+
+Tab:CreateConfig("Right")
