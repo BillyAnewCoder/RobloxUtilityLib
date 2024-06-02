@@ -27,6 +27,22 @@ AimbotSettings:CreateToggle("Team Check", false, function(state)
     print("Team Check: ", state)
 end)
 
+AimbotSettings:CreateSlider("Velocity Threshold", 0, 39, 100, 1, function(value)
+    print("Velocity Threshold: ", value)
+end)
+
+AimbotSettings:CreateToggle("Sticky Aim", false, function(state)
+    print("Sticky Aim: ", state)
+end)
+
+AimbotSettings:CreateToggle("Trigger Bot", false, function(state)
+    print("Trigger Bot: ", state)
+end)
+
+AimbotSettings:CreateToggle("Trigger Bot Prediction", false, function(state)
+    print("Trigger Bot Prediction: ", state)
+end)
+
 -- General Settings Sector
 local GeneralSettings = SettingsTab:CreateSector("General Settings", "Left")
 
