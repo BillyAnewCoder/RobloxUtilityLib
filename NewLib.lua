@@ -58,7 +58,7 @@ function NewLib:CreateWindow(toggleKey, windowName)
         end
         
         function tab:CreateConfig(position)
-            table.insert(window.tabs, {type = "Config", position = position})
+            table.insert(tab.sectors, {type = "Config", position = position})
         end
         
         table.insert(window.tabs, tab)
