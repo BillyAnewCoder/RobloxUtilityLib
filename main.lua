@@ -1,5 +1,3 @@
--- Your improved cheat script goes here
-
 -- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -153,8 +151,7 @@ local function SilentAim()
     local closestDistance = math.huge
 
     for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and (not Config.TeamCheck or not IsOnSameTeam
-                (LocalPlayer, player)) then
+        if player ~= LocalPlayer and (not Config.TeamCheck or not IsOnSameTeam(LocalPlayer, player)) then
             local character = player.Character
             if character and character:FindFirstChild("HumanoidRootPart") then
                 local screenPoint = Camera:WorldToScreenPoint(character.HumanoidRootPart.Position)
@@ -309,4 +306,3 @@ setmetatable(Workspace, {
 
 -- Main loop for Silent Aim
 RunService.RenderStepped:Connect(SilentAim)
-
