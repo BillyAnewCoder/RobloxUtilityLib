@@ -150,7 +150,7 @@ local function Wallbang()
     raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
     raycastParams.FilterDescendantsInstances = {LocalPlayer.Character}
 
-    Workspace:Raycast = function(origin, direction, ...)
+    Workspace.Raycast = function(origin, direction, ...)
         local result = Workspace:Raycast(origin, direction, raycastParams)
         if result and result.Instance and not result.Instance.CanCollide then
             -- If the hit part is not collidable, continue the raycast
