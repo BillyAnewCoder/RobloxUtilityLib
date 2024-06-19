@@ -13,8 +13,6 @@ local Config = {
     SilentAimEnabled = false,
     WallbangEnabled = false,
     TeamCheckEnabled = false,
-    FlyEnabled = false,
-    NoclipEnabled = false,
     Keybinds = {
         ToggleSilentAim = Enum.KeyCode.Z,
         ToggleWallbang = Enum.KeyCode.X,
@@ -138,7 +136,7 @@ local function SilentAim()
     end
 
     if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        -- Manipulate the mouse target to the selected player's HumanoidRootPart
+        -- Manipulate the hit detection to target the selected player's HumanoidRootPart
         mouse.Target = target.Character.HumanoidRootPart
     end
 end
@@ -166,4 +164,15 @@ end
 RunService.RenderStepped:Connect(function()
     SilentAim()
     Wallbang()
+end)
+
+-- Input handling for toggling features
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Config.Keybinds.ToggleSilentAim then
+        Config.SilentAimEnabled = not Config.SilentAimEnabled
+    elseif input.KeyCode == Config.Keybinds.ToggleWallbang then
+        Config.WallbangEnabled = not Config.WallbangEnabled
+    elseif input.KeyCode == Config.Keybinds.ToggleTeamCheck then
+        Config.TeamCheckEnabled = not Config.TeamCheckEnabled
+    end
 end)
