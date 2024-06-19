@@ -1,5 +1,3 @@
--- Your improved cheat script goes here
-
 -- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -14,17 +12,14 @@ local Camera = Workspace.CurrentCamera
 local Config = {
     SilentAimEnabled = false,
     WallbangEnabled = false,
-    TeamCheck = false,
+    TeamCheckEnabled = false,
     FlyEnabled = false,
     NoclipEnabled = false,
     Keybinds = {
         ToggleSilentAim = Enum.KeyCode.Z,
         ToggleWallbang = Enum.KeyCode.X,
-        ToggleTeamCheck = Enum.KeyCode.C,
-        ToggleFly = Enum.KeyCode.F,
-        ToggleNoclip = Enum.KeyCode.V
-    },
-    FlySpeed = 50
+        ToggleTeamCheck = Enum.KeyCode.C
+    }
 }
 
 -- GUI Setup
@@ -35,8 +30,6 @@ local DragFrame = Instance.new("Frame")
 local EnableSilentAim = Instance.new("TextButton")
 local EnableWallbang = Instance.new("TextButton")
 local EnableTeamCheck = Instance.new("TextButton")
-local EnableFly = Instance.new("TextButton")
-local EnableNoclip = Instance.new("TextButton")
 
 ScreenGui.Parent = game.CoreGui
 
@@ -64,8 +57,6 @@ end
 createButton(EnableSilentAim, "Enable Silent Aim", UDim2.new(0.1, 0, 0.2, 0))
 createButton(EnableWallbang, "Enable Wallbang", UDim2.new(0.1, 0, 0.35, 0))
 createButton(EnableTeamCheck, "Enable Team Check", UDim2.new(0.1, 0, 0.5, 0))
-createButton(EnableFly, "Enable Fly", UDim2.new(0.1, 0, 0.65, 0))
-createButton(EnableNoclip, "Enable Noclip", UDim2.new(0.1, 0, 0.8, 0))
 
 EnableSilentAim.MouseButton1Click:Connect(function()
     Config.SilentAimEnabled = not Config.SilentAimEnabled
@@ -78,28 +69,8 @@ EnableWallbang.MouseButton1Click:Connect(function()
 end)
 
 EnableTeamCheck.MouseButton1Click:Connect(function()
-    Config.TeamCheck = not Config.TeamCheck
-    EnableTeamCheck.Text = Config.TeamCheck and "Disable Team Check" or "Enable Team Check"
-end)
-
-EnableFly.MouseButton1Click:Connect(function()
-    Config.FlyEnabled = not Config.FlyEnabled
-    EnableFly.Text = Config.FlyEnabled and "Disable Fly" or "Enable Fly"
-    if Config.FlyEnabled then
-        StartFly()
-    else
-        StopFly()
-    end
-end)
-
-EnableNoclip.MouseButton1Click:Connect(function()
-    Config.NoclipEnabled = not Config.NoclipEnabled
-    EnableNoclip.Text = Config.NoclipEnabled and "Disable Noclip" or "Enable Noclip"
-    if Config.NoclipEnabled then
-        StartNoclip()
-    else
-        StopNoclip()
-    end
+    Config.TeamCheckEnabled = not Config.TeamCheckEnabled
+    EnableTeamCheck.Text = Config.TeamCheckEnabled and "Disable Team Check" or "Enable Team Check"
 end)
 
 -- Make GUI draggable
@@ -153,11 +124,11 @@ local function SilentAim()
     local closestDistance = math.huge
 
     for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and (not Config.TeamCheck or not IsOnSameTeam(LocalPlayer, player)) then
+        if player ~= LocalPlayer and (not Config.TeamCheckEnabled or not IsOnSameTeam(LocalPlayer, player)) then
             local character = player.Character
             if character and character:FindFirstChild("HumanoidRootPart") then
                 local screenPoint = Camera:WorldToScreenPoint(character.HumanoidRootPart.Position)
-                local distance = (Vector2.new(screenPoint.X, screenPoint.Y) - Vector2.new(mouse.X, mouse.Y)).magnitude
+                local distance = (Vector2.new(screenPoint.X, screenPoint.Y) - Vector2.new(mouse.X, mouse.Y)).Magnitude
                 if distance < closestDistance then
                     closestDistance = distance
                     target = player
@@ -167,145 +138,32 @@ local function SilentAim()
     end
 
     if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        -- Modify the mouse target to the selected player's HumanoidRootPart
+        -- Manipulate the mouse target to the selected player's HumanoidRootPart
         mouse.Target = target.Character.HumanoidRootPart
     end
 end
 
--- Fly functionality
-local flying = false
-local bv, bg
-
-local function StartFly()
-    local character = LocalPlayer.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
-
-    bv = Instance.new("BodyVelocity")
-    bv.Velocity = Vector3.new(0, 0, 0)
-    bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    bv.Parent = character.HumanoidRootPart
-
-    bg = Instance.new("BodyGyro")
-    bg.CFrame = character.HumanoidRootPart.CFrame
-    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bg.P = 10000
-    bg.Parent = character.HumanoidRootPart
-
-    flying = true
-
-    while flying and Config.FlyEnabled do
-        RunService.RenderStepped:Wait()
-        local direction = Vector3.new()
-
-        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-            direction = direction + Workspace.CurrentCamera.CFrame.LookVector
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-            direction = direction - Workspace.CurrentCamera.CFrame.LookVector
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-            direction = direction - Workspace.CurrentCamera.CFrame.RightVector
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-            direction = direction + Workspace.CurrentCamera.CFrame.RightVector
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-            direction = direction + Vector3.new(0, 1, 0)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-            direction = direction - Vector3.new(0, 1, 0)
-        end
-
-        bv.Velocity = direction * Config.FlySpeed
-        bg.CFrame = Workspace.CurrentCamera.CFrame
-    end
-end
-
-local function StopFly()
-    if bv then bv:Destroy() end
-    if bg then bg:Destroy() end
-    LocalPlayer.Character.Humanoid.PlatformStand = false
-    flying = false
-end
-
--- Noclip functionality
-local noclipping = false
-
-local function StartNoclip()
-    while Config.NoclipEnabled do
-        for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.CanCollide = false
-            end
-        end
-        RunService.Stepped:Wait()
-    end
-end
-
-local function StopNoclip()
-    for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
-        if v:IsA("BasePart") then
-            v.CanCollide = true
-        end
-    end
-    noclipping = false
-end
-
--- Input handling for toggling features
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Config.Keybinds.ToggleSilentAim then
-        Config.SilentAimEnabled = not Config.SilentAimEnabled
-    elseif input.KeyCode == Config.Keybinds.ToggleWallbang then
-        Config.WallbangEnabled = not Config.WallbangEnabled
-    elseif input.KeyCode == Config.Keybinds.ToggleTeamCheck then
-        Config.TeamCheck = not Config.TeamCheck
-    elseif input.KeyCode == Config.Keybinds.ToggleFly then
-        Config.FlyEnabled = not Config.FlyEnabled
-        if Config.FlyEnabled then
-            StartFly()
-        else
-            StopFly()
-        end
-    elseif input.KeyCode == Config.Keybinds.ToggleNoclip then
-        Config.NoclipEnabled = not Config.NoclipEnabled
-        if Config.NoclipEnabled then
-            StartNoclip()
-        else
-            StopNoclip()
-        end
-    end
-end)
-
--- Raycast Bypass for Wallbang
-local function RaycastBypass(origin, direction, ...)
-    if not Config.WallbangEnabled then
-        return Workspace:Raycast(origin, direction, ...)
-    end
+-- Wallbang functionality
+local function Wallbang()
+    if not Config.WallbangEnabled then return end
 
     -- Custom raycast logic to bypass walls
-    local params = RaycastParams.new()
-    params.FilterType = Enum.RaycastFilterType.Blacklist
-    params.FilterDescendantsInstances = {LocalPlayer.Character}
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.FilterDescendantsInstances = {LocalPlayer.Character}
 
-    local result = Workspace:Raycast(origin, direction, params)
-    if result and result.Instance and not result.Instance.CanCollide then
-        -- If the hit part is not collidable, continue the raycast
-        return RaycastBypass(result.Position, direction, ...)
+    Workspace:Raycast = function(origin, direction, ...)
+        local result = Workspace:Raycast(origin, direction, raycastParams)
+        if result and result.Instance and not result.Instance.CanCollide then
+            -- If the hit part is not collidable, continue the raycast
+            return Workspace:Raycast(result.Position, direction, ...)
+        end
+        return result
     end
-
-    return result
 end
 
--- Override the original Raycast method
-setmetatable(Workspace, {
-    __index = function(t, k)
-        if k == "Raycast" then
-            return RaycastBypass
-        end
-        return rawget(t, k)
-    end
-})
-
--- Main loop for Silent Aim
-RunService.RenderStepped:Connect(SilentAim)
-
+-- Main loop for Silent Aim and Wallbang
+RunService.RenderStepped:Connect(function()
+    SilentAim()
+    Wallbang()
+end)
