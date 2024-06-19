@@ -1,3 +1,5 @@
+-- Your improved cheat script goes here
+
 -- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -306,3 +308,4 @@ setmetatable(Workspace, {
 
 -- Main loop for Silent Aim
 RunService.RenderStepped:Connect(SilentAim)
+
